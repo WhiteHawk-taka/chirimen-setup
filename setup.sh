@@ -13,7 +13,7 @@ sudo apt-get clean
 sudo apt-get autoremove
 
 # 各種ツールをインストール
-sudo apt-get -y install ttf-kochi-gothic fonts-noto uim uim-mozc nodejs npm apache2 vim emacs
+sudo apt-get -y install ttf-kochi-gothic fonts-noto uim uim-mozc nodejs npm apache2 vim emacs display
 
 # ディスプレイ解像度設定
 echo 'hdmi_force_hotplug=1 hdmi_group=2 hdmi_mode=85 hdmi_drive=2' | sudo tee -a /boot/config.txt
@@ -39,3 +39,16 @@ echo 'options bcm2835-v4l2 gst_v4l2src_is_broken=1' | sudo tee -a /etc/modprobe.
 
 # I2Cを有効化
 sudo raspi-config nonint do_i2c 0
+
+# _gc設定
+cd /home/pi/
+wget https://rawgit.com/chirimen-oh/chirimen-raspi3/master/release/env/_gc.zip
+unzip ./_gc.zip
+cd /home/pi/_gc/srv
+npm i
+sudo npm i forever -g
+cd /home/pi/
+echo "@reboot sudo -u pi /home/pi/_gc/srv/startup.sh" | crontab
+ln -s /home/pi/_gc/srv/reset.sh /home/pi/Desktop/reset.sh
+sudo sed 's/wallpaper=.*\n/wallpaper=/home/pi/_gc/wallpaper/wallpaper-720p.png/g' /etc/lightdm/pi-greeter.conf | sudo tee /etc/lightdm/pi-greeter.conf
+sudo sed 's/wallpaper=.*\n/wallpaper=/home/pi/_gc/wallpaper/wallpaper-720p.png/g' /home/pi/.config/pcmanfm/LXDE-pi/desktop-items-0.conf | sudo tee /home/pi/.config/pcmanfm/LXDE-pi/desktop-items-0.conf
