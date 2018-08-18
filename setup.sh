@@ -1,17 +1,17 @@
 #!/bin/bash
+# 軽量化
+sudo apt-get -y purge wolfram-engine
+sudo apt-get -y purge minecraft-pi
+sudo apt-get -y remove --purge libreoffice*
+sudo apt-get -y clean
+sudo apt-get -y autoremove
+
 sudo apt-get -y update
 sudo apt-get -y upgrade
 
 # raspiはupgrade失敗しやすいので念の為2回
 sudo apt-get -y update
 sudo apt-get -y upgrade
-
-# 軽量化
-sudo apt-get -y purge wolfram-engine
-sudo apt-get -y purge minecraft-pi
-sudo apt-get -y remove --purge libreoffice*
-sudo apt-get clean
-sudo apt-get -y autoremove
 
 # 各種ツールをインストール
 sudo apt-get -y install ttf-kochi-gothic fonts-noto uim uim-mozc nodejs npm apache2 vim emacs
