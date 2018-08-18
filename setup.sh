@@ -27,7 +27,7 @@ sudo locale-gen ja_JP.UTF-8
 sudo update-locale LANG=ja_JP.UTF-8
 
 # 時間設定
-sudo raspi-config nonint do_change_timezone Europe/Amsterdam
+sudo raspi-config nonint do_change_timezone Japan
 
 # キーボード設定
 sudo raspi-config nonint do_configure_keyboard jp
