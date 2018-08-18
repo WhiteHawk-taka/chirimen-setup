@@ -52,3 +52,5 @@ echo "@reboot sudo -u pi /home/pi/_gc/srv/startup.sh" | crontab
 ln -s /home/pi/_gc/srv/reset.sh /home/pi/Desktop/reset.sh
 sudo sed 's/wallpaper=.*\n/wallpaper=/home/pi/_gc/wallpaper/wallpaper-720p.png/g' /etc/lightdm/pi-greeter.conf | sudo tee /etc/lightdm/pi-greeter.conf
 sudo sed 's/wallpaper=.*\n/wallpaper=/home/pi/_gc/wallpaper/wallpaper-720p.png/g' /home/pi/.config/pcmanfm/LXDE-pi/desktop-items-0.conf | sudo tee /home/pi/.config/pcmanfm/LXDE-pi/desktop-items-0.conf
+mv /home/pi/chirimen-setup/Bookmarks /home/pi/.config/chromium/Default/Bookmarks
+
