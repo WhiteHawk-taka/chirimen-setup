@@ -7,13 +7,14 @@ sudo apt-get -y update
 sudo apt-get -y upgrade
 
 # 軽量化
-sudo apt-get purge wolfram-engine
-sudo apt-get remove --purge libreoffice*
+sudo apt-get -y purge wolfram-engine
+sudo apt-get -y purge minecraft-pi
+sudo apt-get -y remove --purge libreoffice*
 sudo apt-get clean
-sudo apt-get autoremove
+sudo apt-get -y autoremove
 
 # 各種ツールをインストール
-sudo apt-get -y install ttf-kochi-gothic fonts-noto uim uim-mozc nodejs npm apache2 vim emacs display
+sudo apt-get -y install ttf-kochi-gothic fonts-noto uim uim-mozc nodejs npm apache2 vim emacs
 
 # ディスプレイ解像度設定
 echo 'hdmi_force_hotplug=1 hdmi_group=2 hdmi_mode=85 hdmi_drive=2' | sudo tee -a /boot/config.txt
