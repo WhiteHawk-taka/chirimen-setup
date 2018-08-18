@@ -33,7 +33,7 @@ sudo raspi-config nonint do_change_timezone Japan
 sudo raspi-config nonint do_configure_keyboard jp
 
 # パスワードの変更
-echo 'pi:rasp' | chpasswd
+echo 'pi:rasp' | sudo chpasswd
 
 # node.jsのインストール
 sudo npm cache clean
