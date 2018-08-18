@@ -54,3 +54,12 @@ sudo sed 's/wallpaper=.*\n/wallpaper=/home/pi/_gc/wallpaper/wallpaper-720p.png/g
 sudo sed 's/wallpaper=.*\n/wallpaper=/home/pi/_gc/wallpaper/wallpaper-720p.png/g' /home/pi/.config/pcmanfm/LXDE-pi/desktop-items-0.conf | sudo tee /home/pi/.config/pcmanfm/LXDE-pi/desktop-items-0.conf
 mv /home/pi/chirimen-setup/Bookmarks /home/pi/.config/chromium/Default/Bookmarks
 
+# gc設定
+sudo sed 's/\/var\/www\/html/\/home\/pi\/Desktop\/gc/g' /etc/apache2/sites-available/000-default.conf | sudo tee /etc/apache2/sites-available/000-default.conf
+sudo sed 's/\/var\/www\//\/home\/pi\/Desktop\/gc/g' /etc/apache2/apache2.conf | sudo tee /etc/apache2/apache2.conf
+cp /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-available/vhost-ssl.conf
+echo 'SSLCertificateFile /home/pi/_gc/srv/crt/server.crt SSLCertificateKeyFile /home/pi/_gc/srv/crt/server.key' | sudo tee -a /etc/apache2/sites-available/vhost-ssl.conf
+sudo a2ensite vhost-ssl
+sudo a2enmod ssl
+sudo systemctl restart apache2
+echo '@/usr/bin/chromium-browser https://localhost/top' >> /home/pi/.config/lxsession/LXDE-pi/autostart
