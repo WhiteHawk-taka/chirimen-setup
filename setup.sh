@@ -17,7 +17,7 @@ sudo apt-get -y upgrade
 sudo apt-get -y install ttf-kochi-gothic fonts-noto uim uim-mozc nodejs npm apache2 vim emacs
 # インストール失敗しやすいので2回
 sudo apt-get -y install ttf-kochi-gothic fonts-noto uim uim-mozc nodejs npm apache2 vim emacs
-
+sudo apt-get -y autoremove
 
 # ディスプレイ解像度設定
 echo 'hdmi_force_hotplug=1 hdmi_group=2 hdmi_mode=85 hdmi_drive=2' | sudo tee -a /boot/config.txt
