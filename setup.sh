@@ -60,8 +60,6 @@ sudo npm i forever -g
 cd /home/pi/
 echo "@reboot sudo -u pi /home/pi/_gc/srv/startup.sh" | crontab
 ln -s /home/pi/_gc/srv/reset.sh /home/pi/Desktop/reset.sh
-sudo sed 's/wallpaper=.*$/wallpaper=\/home\/pi\/_gc\/wallpaper\/wallpaper-720p\.png/g' /etc/lightdm/pi-greeter.conf | sudo tee /etc/lightdm/pi-greeter.conf
-sudo sed 's/wallpaper=.*$/wallpaper=\/home\/pi\/_gc\/wallpaper\/wallpaper-720p\.png/g' /home/pi/.config/pcmanfm/LXDE-pi/desktop-items-0.conf | sudo tee /home/pi/.config/pcmanfm/LXDE-pi/desktop-items-0.conf
 mkdir /home/pi/.config/chromium/
 mkdir /home/pi/.config/chromium/Default/
 mv /home/pi/chirimen-setup/Bookmarks /home/pi/.config/chromium/Default/Bookmarks
@@ -69,7 +67,7 @@ mv /home/pi/chirimen-setup/Bookmarks /home/pi/.config/chromium/Default/Bookmarks
 # gc設定
 sudo sed 's/\/var\/www\/html/\/home\/pi\/Desktop\/gc/g' /etc/apache2/sites-available/000-default.conf | sudo tee /etc/apache2/sites-available/000-default.conf
 sudo sed 's/\/var\/www\//\/home\/pi\/Desktop\/gc/g' /etc/apache2/apache2.conf | sudo tee /etc/apache2/apache2.conf
-cp /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-available/vhost-ssl.conf
+sudo cp /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-available/vhost-ssl.conf
 echo 'SSLCertificateFile /home/pi/_gc/srv/crt/server.crt SSLCertificateKeyFile /home/pi/_gc/srv/crt/server.key' | sudo tee -a /etc/apache2/sites-available/vhost-ssl.conf
 sudo a2ensite vhost-ssl
 sudo a2enmod ssl
