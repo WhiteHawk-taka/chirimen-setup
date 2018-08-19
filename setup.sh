@@ -15,6 +15,9 @@ sudo apt-get -y upgrade
 
 # 各種ツールをインストール
 sudo apt-get -y install ttf-kochi-gothic fonts-noto uim uim-mozc nodejs npm apache2 vim emacs
+# インストール失敗しやすいので2回
+sudo apt-get -y install ttf-kochi-gothic fonts-noto uim uim-mozc nodejs npm apache2 vim emacs
+
 
 # ディスプレイ解像度設定
 echo 'hdmi_force_hotplug=1 hdmi_group=2 hdmi_mode=85 hdmi_drive=2' | sudo tee -a /boot/config.txt
@@ -59,6 +62,8 @@ echo "@reboot sudo -u pi /home/pi/_gc/srv/startup.sh" | crontab
 ln -s /home/pi/_gc/srv/reset.sh /home/pi/Desktop/reset.sh
 sudo sed 's/wallpaper=.*$/wallpaper=\/home\/pi\/_gc\/wallpaper\/wallpaper-720p\.png/g' /etc/lightdm/pi-greeter.conf | sudo tee /etc/lightdm/pi-greeter.conf
 sudo sed 's/wallpaper=.*$/wallpaper=\/home\/pi\/_gc\/wallpaper\/wallpaper-720p\.png/g' /home/pi/.config/pcmanfm/LXDE-pi/desktop-items-0.conf | sudo tee /home/pi/.config/pcmanfm/LXDE-pi/desktop-items-0.conf
+mkdir /home/pi/.config/chromium/
+mkdir /home/pi/.config/chromium/Default/
 mv /home/pi/chirimen-setup/Bookmarks /home/pi/.config/chromium/Default/Bookmarks
 
 # gc設定
