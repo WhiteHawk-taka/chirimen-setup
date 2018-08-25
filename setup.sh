@@ -2,6 +2,8 @@
 # 軽量化
 sudo apt-get -y purge wolfram-engine
 sudo apt-get -y purge minecraft-pi
+sudo apt-get -y purge scratch
+sudo apt-get -y purge scratch2
 sudo apt-get -y remove --purge libreoffice*
 sudo apt-get -y clean
 sudo apt-get -y autoremove
