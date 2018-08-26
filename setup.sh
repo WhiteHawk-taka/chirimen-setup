@@ -27,9 +27,9 @@ echo 'hdmi_force_hotplug=1 hdmi_group=2 hdmi_mode=85 hdmi_drive=2' | sudo tee -a
 
 read -p "enter: "
 # 日本語設定
-sudo sed 's/#\sen_GB\.UTF-8\sUTF-8/en_GB\.UTF-8 UTF-8/g' /etc/locale.gen | echo $(cat) | sudo tee /tmp/locale && sudo cat /tmp/locale | sudo tee /etc/locale.gen && rm -f /tmp/locale
-sudo sed 's/#\sja_JP\.EUC-JP\sEUC-JP/ja_JP\.EUC-JP EUC-JP/g' /etc/locale.gen  | echo $(cat) | sudo tee /tmp/locale && sudo cat /tmp/locale | sudo tee /etc/locale.gen && rm -f /tmp/locale
-sudo sed 's/#\sja_JP\.UTF-8\sUTF-8/ja_JP\.UTF-8 UTF-8/g' /etc/locale.gen  | echo $(cat) | sudo tee /tmp/locale && sudo cat /tmp/locale | sudo tee /etc/locale.gen && rm -f /tmp/locale
+sudo sed 's/#\sen_GB\.UTF-8\sUTF-8/en_GB\.UTF-8 UTF-8/g' /etc/locale.gen | sudo tee /tmp/locale && sudo cat /tmp/locale | sudo tee /etc/locale.gen && rm -f /tmp/locale
+sudo sed 's/#\sja_JP\.EUC-JP\sEUC-JP/ja_JP\.EUC-JP EUC-JP/g' /etc/locale.gen  | sudo tee /tmp/locale && sudo cat /tmp/locale | sudo tee /etc/locale.gen && rm -f /tmp/locale
+sudo sed 's/#\sja_JP\.UTF-8\sUTF-8/ja_JP\.UTF-8 UTF-8/g' /etc/locale.gen  | sudo tee /tmp/locale && sudo cat /tmp/locale | sudo tee /etc/locale.gen && rm -f /tmp/locale
 sudo locale-gen ja_JP.UTF-8
 sudo update-locale LANG=ja_JP.UTF-8
 
@@ -78,8 +78,8 @@ mv /home/pi/chirimen-setup/Bookmarks /home/pi/.config/chromium/Default/Bookmarks
 
 read -p "enter: "
 # gc設定
-sudo sed 's/\/var\/www\/html/\/home\/pi\/Desktop\/gc/g' /etc/apache2/sites-available/000-default.conf  | echo $(cat) | sudo tee /tmp/apache-default && sudo cat /tmp/apache-default | sudo tee /etc/apache2/sites-available/000-default.conf && rm -f /tmp/apache-default
-sudo sed 's/\/var\/www\//\/home\/pi\/Desktop\/gc/g' /etc/apache2/apache2.conf | echo $(cat) | sudo tee /tmp/apache && sudo cat /tmp/apache | sudo tee /etc/apache2/sites-available/000-default.conf && rm -f /tmp/apache
+sudo sed 's/\/var\/www\/html/\/home\/pi\/Desktop\/gc/g' /etc/apache2/sites-available/000-default.conf  | sudo tee /tmp/apache-default && sudo cat /tmp/apache-default | sudo tee /etc/apache2/sites-available/000-default.conf && rm -f /tmp/apache-default
+sudo sed 's/\/var\/www\//\/home\/pi\/Desktop\/gc/g' /etc/apache2/apache2.conf | sudo tee /tmp/apache && sudo cat /tmp/apache | sudo tee /etc/apache2/sites-available/000-default.conf && rm -f /tmp/apache
 sudo cp /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-available/vhost-ssl.conf
 echo 'SSLCertificateFile /home/pi/_gc/srv/crt/server.crt SSLCertificateKeyFile /home/pi/_gc/srv/crt/server.key' | sudo tee -a /etc/apache2/sites-available/vhost-ssl.conf
 sudo a2ensite vhost-ssl
