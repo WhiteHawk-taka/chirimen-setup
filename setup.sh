@@ -89,24 +89,11 @@ sudo a2ensite vhost-ssl
 sudo a2enmod ssl
 sudo systemctl restart apache2
 echo '@/usr/bin/chromium-browser https://localhost/top' >> /home/pi/.config/lxsession/LXDE-pi/autostart
+chromium &
 
 # 証明書追加
 certfile="/home/pi/_gc/srv/crt/ca.crt"
 certname="org-TripArts"
-
-###
-### For cert8 (legacy - DBM)
-###
-
-for certDB in $(find ~/ -name "cert8.db")
-do
-    certdir=$(dirname ${certDB});
-    certutil -A -n "${certname}" -t "TCu,Cu,Tu" -i ${certfile} -d dbm:${certdir}
-done
-
-###
-### For cert9 (SQL)
-###
 
 for certDB in $(find ~/ -name "cert9.db")
 do
