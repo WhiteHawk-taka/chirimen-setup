@@ -22,9 +22,9 @@ sudo apt-get -y update
 sudo apt-get -y upgrade
 
 # 各種ツールをインストール
-sudo apt-get -y install ttf-kochi-gothic fonts-noto uim uim-mozc nodejs npm apache2 vim emacs
+sudo apt-get -y install ttf-kochi-gothic fonts-noto uim uim-mozc nodejs npm apache2 vim emacs libnss3-tools
 # インストール失敗しやすいので2回
-sudo apt-get -y install ttf-kochi-gothic fonts-noto uim uim-mozc nodejs npm apache2 vim emacs
+sudo apt-get -y install ttf-kochi-gothic fonts-noto uim uim-mozc nodejs npm apache2 vim emacs libnss3-tools
 sudo apt-get -y autoremove
 
 # ディスプレイ解像度設定
