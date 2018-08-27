@@ -1,4 +1,10 @@
 #!/bin/bash
+# 一時的にスリープを無効
+sudo xset s off
+sudo xset -dpms
+sudo xset s noblank
+# スリープまでの時間を1時間に変更
+echo 'consoleblank=3600' | sudo tee -a /boot/cmdline.txt
 # 軽量化
 sudo apt-get -y purge wolfram-engine
 sudo apt-get -y purge minecraft-pi
@@ -68,6 +74,9 @@ mkdir /home/pi/.config/chromium/Default/
 mv /home/pi/chirimen-setup/Bookmarks /home/pi/.config/chromium/Default/Bookmarks
 
 # gc設定
+cd /home/pi/
+wget https://rawgit.com/chirimen-oh/chirimen-raspi3/master/release/env/gc.zip
+unzip ./gc.zip -d /home/pi/Desktop
 sudo sed 's/\/var\/www\/html/\/home\/pi\/Desktop\/gc/g' /etc/apache2/sites-available/000-default.conf  | sudo tee /tmp/apache-default && sudo cat /tmp/apache-default | sudo tee /etc/apache2/sites-available/000-default.conf && rm -f /tmp/apache-default
 sudo sed 's/\/var\/www\//\/home\/pi\/Desktop\/gc/g' /etc/apache2/apache2.conf | sudo tee /tmp/apache && sudo cat /tmp/apache | sudo tee /etc/apache2/apache2.conf && rm -f /tmp/apache
 sudo cp /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-available/vhost-ssl.conf
@@ -87,6 +96,6 @@ mv arduino-1.8.6 /home/pi/Applications/
 cd /home/pi/Applications/
 ln -s arduino-1.8.6 arduino
 cd /home/pi/Applications/arduino/
-./install
+./install.sh
 rm -f /home/pi/arduino-1.8.6-linuxarm.tar.xz
 cd /home/pi/
