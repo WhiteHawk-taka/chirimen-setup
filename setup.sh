@@ -76,6 +76,7 @@ pcmanfm --set-wallpaper /home/pi/_gc/wallpaper/wallpaper-720p.png
 
 
 # gc設定
+chromium &
 cd /home/pi/
 wget https://rawgit.com/chirimen-oh/chirimen-raspi3/master/release/env/gc.zip
 unzip ./gc.zip -d /home/pi/Desktop
@@ -89,7 +90,6 @@ sudo a2ensite vhost-ssl
 sudo a2enmod ssl
 sudo systemctl restart apache2
 echo '@/usr/bin/chromium-browser https://localhost/top' >> /home/pi/.config/lxsession/LXDE-pi/autostart
-chromium &
 
 # 証明書追加
 certfile="/home/pi/_gc/srv/crt/ca.crt"
