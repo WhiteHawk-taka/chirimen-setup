@@ -87,7 +87,7 @@ sleep 120s
 sudo sed 's/\/var\/www\/html/\/home\/pi\/Desktop\/gc/g' /etc/apache2/sites-available/000-default.conf  | sudo tee /tmp/apache-default && sudo cat /tmp/apache-default | sudo tee /etc/apache2/sites-available/000-default.conf && rm -f /tmp/apache-default
 sudo sed 's/\/var\/www\//\/home\/pi\/Desktop\/gc/g' /etc/apache2/apache2.conf | sudo tee /tmp/apache && sudo cat /tmp/apache | sudo tee /etc/apache2/apache2.conf && rm -f /tmp/apache
 sudo cp /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-available/vhost-ssl.conf
-sudo sed 's/\/var\/www\/html/home\/pi\/Desktop\/gc/g' /etc/apache2/sites-available/vhost-ssl.conf  | sudo tee /tmp/vhost && sudo cat /tmp/vhost | sudo tee /etc/apache2/sites-available/vhost-ssl.conf && rm -f /tmp/vhost
+sudo sed 's/\/var\/www\/html/\/home\/pi\/Desktop\/gc/g' /etc/apache2/sites-available/vhost-ssl.conf  | sudo tee /tmp/vhost && sudo cat /tmp/vhost | sudo tee /etc/apache2/sites-available/vhost-ssl.conf && rm -f /tmp/vhost
 sudo sed 's/\/etc\/ssl\/certs\/ssl-cert-snakeoil\.pem/\/home\/pi\/_gc\/srv\/crt\/server\.crt/g' /etc/apache2/sites-available/vhost-ssl.conf | sudo tee /tmp/vhost && sudo cat /tmp/vhost | sudo tee /etc/apache2/sites-available/vhost-ssl.conf && rm -f /tmp/vhost
 sudo sed 's/\/etc\/ssl\/private\/ssl-cert-snakeoil\.key/\/home\/pi\/_gc\/srv\/crt\/server\.key/g' /etc/apache2/sites-available/vhost-ssl.conf | sudo tee /tmp/vhost && sudo cat /tmp/vhost | sudo tee /etc/apache2/sites-available/vhost-ssl.conf && rm -f /tmp/vhost
 sudo a2ensite vhost-ssl
