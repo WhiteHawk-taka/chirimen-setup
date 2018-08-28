@@ -72,7 +72,7 @@ ln -s /home/pi/_gc/srv/reset.sh /home/pi/Desktop/reset.sh
 mkdir /home/pi/.config/chromium/
 mkdir /home/pi/.config/chromium/Default/
 mv /home/pi/chirimen-setup/Bookmarks /home/pi/.config/chromium/Default/Bookmarks
-pcmanfm --set-wallpaper /home/pi/_gc/wallpaper/wallpaper-720p.png
+pcmanfm --set-wallpaper /home/pi/_gc/wallpaper/wallpaper-720P.png
 
 
 # gc設定
