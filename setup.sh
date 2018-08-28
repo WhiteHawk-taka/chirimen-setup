@@ -76,10 +76,12 @@ pcmanfm --set-wallpaper /home/pi/_gc/wallpaper/wallpaper-720p.png
 
 
 # gc設定
-chromium &
+chromium-browser &
 cd /home/pi/
 wget https://rawgit.com/chirimen-oh/chirimen-raspi3/master/release/env/gc.zip
 unzip ./gc.zip -d /home/pi/Desktop
+# chromiumの起動待ち
+sleep 30s
 sudo sed 's/\/var\/www\/html/\/home\/pi\/Desktop\/gc/g' /etc/apache2/sites-available/000-default.conf  | sudo tee /tmp/apache-default && sudo cat /tmp/apache-default | sudo tee /etc/apache2/sites-available/000-default.conf && rm -f /tmp/apache-default
 sudo sed 's/\/var\/www\//\/home\/pi\/Desktop\/gc/g' /etc/apache2/apache2.conf | sudo tee /tmp/apache && sudo cat /tmp/apache | sudo tee /etc/apache2/apache2.conf && rm -f /tmp/apache
 sudo cp /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-available/vhost-ssl.conf
