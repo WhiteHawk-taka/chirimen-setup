@@ -28,7 +28,7 @@ sudo apt-get -y install ttf-kochi-gothic fonts-noto uim uim-mozc nodejs npm apac
 sudo apt-get -y autoremove
 
 # ディスプレイ解像度設定
-echo 'hdmi_force_hotplug=1 hdmi_group=2 hdmi_mode=85 hdmi_drive=2' | sudo tee -a /boot/config.txt
+echo '-e hdmi_force_hotplug=1\nhdmi_group=2\nhdmi_mode=85\nhdmi_drive=2\n' | sudo tee -a /boot/config.txt
 
 # 日本語設定
 sudo sed 's/#\sen_GB\.UTF-8\sUTF-8/en_GB\.UTF-8 UTF-8/g' /etc/locale.gen | sudo tee /tmp/locale && sudo cat /tmp/locale | sudo tee /etc/locale.gen && rm -f /tmp/locale
