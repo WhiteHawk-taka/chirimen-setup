@@ -9,7 +9,9 @@ sudo xset s off
 sudo xset -dpms
 sudo xset s noblank
 # スリープを無効
-sudo sed '1s/$/ consoleblank=0/' /boot/cmdline.txt | sudo tee /tmp/cmdline && sudo cat /tmp/cmdline | sudo tee /boot/cmdline.txt && sudo rm -f /tmp/cmdline
+sudo sed '1s/$/ consoleblank=0/' /boot/cmdline.txt |\
+    sudo tee /tmp/cmdline && sudo cat /tmp/cmdline |\
+    sudo tee /boot/cmdline.txt && sudo rm -f /tmp/cmdline
 
 echo '@xset s off' | sudo tee -a /etc/xdg/lxsession/LXDE-pi/autostart
 echo '@xset -dpms' | sudo tee -a /etc/xdg/lxsession/LXDE-pi/autostart
@@ -42,9 +44,15 @@ sudo apt-get -y autoremove
 echo -e 'hdmi_force_hotplug=1\nhdmi_group=2\nhdmi_mode=85\nhdmi_drive=2\n' | sudo tee -a /boot/config.txt
 
 # 日本語設定
-sudo sed 's/#\sen_GB\.UTF-8\sUTF-8/en_GB\.UTF-8 UTF-8/g' /etc/locale.gen | sudo tee /tmp/locale && sudo cat /tmp/locale | sudo tee /etc/locale.gen && sudo rm -f /tmp/locale
-sudo sed 's/#\sja_JP\.EUC-JP\sEUC-JP/ja_JP\.EUC-JP EUC-JP/g' /etc/locale.gen  | sudo tee /tmp/locale && sudo cat /tmp/locale | sudo tee /etc/locale.gen && sudo rm -f /tmp/locale
-sudo sed 's/#\sja_JP\.UTF-8\sUTF-8/ja_JP\.UTF-8 UTF-8/g' /etc/locale.gen  | sudo tee /tmp/locale && sudo cat /tmp/locale | sudo tee /etc/locale.gen && sudo rm -f /tmp/locale
+sudo sed 's/#\sen_GB\.UTF-8\sUTF-8/en_GB\.UTF-8 UTF-8/g' /etc/locale.gen |\
+    sudo tee /tmp/locale && sudo cat /tmp/locale |\
+    sudo tee /etc/locale.gen && sudo rm -f /tmp/locale
+sudo sed 's/#\sja_JP\.EUC-JP\sEUC-JP/ja_JP\.EUC-JP EUC-JP/g' /etc/locale.gen  |\
+    sudo tee /tmp/locale && sudo cat /tmp/locale |\
+    sudo tee /etc/locale.gen && sudo rm -f /tmp/locale
+sudo sed 's/#\sja_JP\.UTF-8\sUTF-8/ja_JP\.UTF-8 UTF-8/g' /etc/locale.gen  |\
+    sudo tee /tmp/locale && sudo cat /tmp/locale |\
+    sudo tee /etc/locale.gen && sudo rm -f /tmp/locale
 sudo locale-gen ja_JP.UTF-8
 sudo update-locale LANG=ja_JP.UTF-8
 
@@ -95,18 +103,32 @@ wget https://downloads.arduino.cc/arduino-1.8.6-linuxarm.tar.xz
 unzip ./gc.zip -d /home/pi/Desktop
 # chromiumの起動待ち
 sleep 120s
-sudo sed 's/\/var\/www\/html/\/home\/pi\/Desktop\/gc/g' /etc/apache2/sites-available/000-default.conf  | sudo tee /tmp/apache-default && sudo cat /tmp/apache-default | sudo tee /etc/apache2/sites-available/000-default.conf && sudo rm -f /tmp/apache-default
-sudo sed 's/\/var\/www\//\/home\/pi\/Desktop\/gc/g' /etc/apache2/apache2.conf | sudo tee /tmp/apache && sudo cat /tmp/apache | sudo tee /etc/apache2/apache2.conf && sudo rm -f /tmp/apache
+sudo sed 's/\/var\/www\/html/\/home\/pi\/Desktop\/gc/g' /etc/apache2/sites-available/000-default.conf |\
+    sudo tee /tmp/apache-default && sudo cat /tmp/apache-default |\
+    sudo tee /etc/apache2/sites-available/000-default.conf && sudo rm -f /tmp/apache-default
+sudo sed 's/\/var\/www\//\/home\/pi\/Desktop\/gc/g' /etc/apache2/apache2.conf |\
+    sudo tee /tmp/apache && sudo cat /tmp/apache |\
+    sudo tee /etc/apache2/apache2.conf && sudo rm -f /tmp/apache
 sudo cp /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-available/vhost-ssl.conf
-sudo sed 's/\/var\/www\/html/\/home\/pi\/Desktop\/gc/g' /etc/apache2/sites-available/vhost-ssl.conf  | sudo tee /tmp/vhost && sudo cat /tmp/vhost | sudo tee /etc/apache2/sites-available/vhost-ssl.conf && sudo rm -f /tmp/vhost
-sudo sed 's/\/etc\/ssl\/certs\/ssl-cert-snakeoil\.pem/\/home\/pi\/_gc\/srv\/crt\/server\.crt/g' /etc/apache2/sites-available/vhost-ssl.conf | sudo tee /tmp/vhost && sudo cat /tmp/vhost | sudo tee /etc/apache2/sites-available/vhost-ssl.conf && sudo rm -f /tmp/vhost
-sudo sed 's/\/etc\/ssl\/private\/ssl-cert-snakeoil\.key/\/home\/pi\/_gc\/srv\/crt\/server\.key/g' /etc/apache2/sites-available/vhost-ssl.conf | sudo tee /tmp/vhost && sudo cat /tmp/vhost | sudo tee /etc/apache2/sites-available/vhost-ssl.conf && sudo rm -f /tmp/vhost
+sudo sed 's/\/var\/www\/html/\/home\/pi\/Desktop\/gc/g' /etc/apache2/sites-available/vhost-ssl.conf |\
+    sudo tee /tmp/vhost && sudo cat /tmp/vhost |\
+    sudo tee /etc/apache2/sites-available/vhost-ssl.conf && sudo rm -f /tmp/vhost
+sudo sed 's/\/etc\/ssl\/certs\/ssl-cert-snakeoil\.pem/\/home\/pi\/_gc\/srv\/crt\/server\.crt/g' /etc/apache2/sites-available/vhost-ssl.conf |\
+    sudo tee /tmp/vhost && sudo cat /tmp/vhost |\
+    sudo tee /etc/apache2/sites-available/vhost-ssl.conf && sudo rm -f /tmp/vhost
+sudo sed 's/\/etc\/ssl\/private\/ssl-cert-snakeoil\.key/\/home\/pi\/_gc\/srv\/crt\/server\.key/g' /etc/apache2/sites-available/vhost-ssl.conf |\
+    sudo tee /tmp/vhost && sudo cat /tmp/vhost |\
+    sudo tee /etc/apache2/sites-available/vhost-ssl.conf && sudo rm -f /tmp/vhost
 sudo a2ensite vhost-ssl
 sudo a2enmod ssl
 sudo systemctl restart apache2
 echo '@/usr/bin/chromium-browser https://localhost/top --enable-experimental-web-platform-features' | sudo tee -a /etc/xdg/lxsession/LXDE-pi/autostart
-sudo sed 's/Exec=\/usr\/bin\/x-www-browser\s%u/Exec=\/usr\/bin\/x-www-browser --enable-experimental-web-platform-features %u/g' /usr/share/raspi-ui-overrides/applications/lxde-x-www-browser.desktop | sudo tee /tmp/xbrowser && sudo cat /tmp/xbrowser | sudo tee /usr/share/raspi-ui-overrides/applications/lxde-x-www-browser.desktop && sudo rm -f /tmp/xbrowser
-sudo sed 's/Exec=chromium-browser/Exec=chromium-browser --enable-experimental-web-platform-features/g' /usr/share/applications/chromium-browser.desktop | sudo tee /tmp/chbrowser && sudo cat /tmp/chbrowser | sudo tee /usr/share/applications/chromium-browser.desktop && sudo rm -f /tmp/chbrowser
+sudo sed 's/Exec=\/usr\/bin\/x-www-browser\s%u/Exec=\/usr\/bin\/x-www-browser --enable-experimental-web-platform-features %u/g' /usr/share/raspi-ui-overrides/applications/lxde-x-www-browser.desktop |\
+    sudo tee /tmp/xbrowser && sudo cat /tmp/xbrowser |\
+    sudo tee /usr/share/raspi-ui-overrides/applications/lxde-x-www-browser.desktop && sudo rm -f /tmp/xbrowser
+sudo sed 's/Exec=chromium-browser/Exec=chromium-browser --enable-experimental-web-platform-features/g' /usr/share/applications/chromium-browser.desktop |\
+    sudo tee /tmp/chbrowser && sudo cat /tmp/chbrowser |\
+    sudo tee /usr/share/applications/chromium-browser.desktop && sudo rm -f /tmp/chbrowser
 
 # 証明書追加
 certfile="/home/pi/_gc/srv/crt/ca.crt"
