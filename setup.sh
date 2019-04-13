@@ -40,6 +40,17 @@ sudo apt-get -y install ttf-kochi-gothic fonts-noto uim uim-mozc nodejs npm apac
 sudo apt-get -y install ttf-kochi-gothic fonts-noto uim uim-mozc nodejs npm apache2 vim emacs libnss3-tools
 sudo apt-get -y autoremove
 
+# VS code (code-ossのインストール)
+# 最新版だと動かないのでバージョンダウンして固定
+wget -qO - https://packagecloud.io/headmelted/codebuilds/gpgkey | sudo apt-key add -
+sudo apt-get update
+sudo dpkg --configure -a
+curl -s https://code.headmelted.com/installers/apt.sh | sudo bash
+sudo apt-get -y remove code-oss
+sudo apt-get -y install code-oss=1.29.0-1539702286
+sudo apt-mark hold code-oss
+
+
 # ディスプレイ解像度設定
 echo -e 'hdmi_force_hotplug=1\nhdmi_group=2\nhdmi_mode=85\nhdmi_drive=2\n' | sudo tee -a /boot/config.txt
 
