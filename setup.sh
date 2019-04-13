@@ -50,9 +50,6 @@ sudo apt-get -y remove code-oss
 sudo apt-get -y install code-oss=1.29.0-1539702286
 sudo apt-mark hold code-oss
 
-# ディスプレイ解像度設定
-echo -e 'hdmi_force_hotplug=1\nhdmi_group=2\nhdmi_mode=85\nhdmi_drive=2\n' | sudo tee -a /boot/config.txt
-
 # 日本語設定
 sudo sed 's/#\sen_GB\.UTF-8\sUTF-8/en_GB\.UTF-8 UTF-8/g' /etc/locale.gen |\
     sudo tee /tmp/locale && sudo cat /tmp/locale |\
@@ -71,9 +68,6 @@ sudo raspi-config nonint do_change_timezone Japan
 
 # キーボード設定
 sudo raspi-config nonint do_configure_keyboard jp
-
-# パスワードの変更
-echo 'pi:rasp' | sudo chpasswd
 
 # node.jsのインストール
 sudo npm cache clean
