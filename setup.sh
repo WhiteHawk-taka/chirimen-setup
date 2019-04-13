@@ -50,10 +50,6 @@ sudo apt-get -y remove code-oss
 sudo apt-get -y install code-oss=1.29.0-1539702286
 sudo apt-mark hold code-oss
 
-# code-oss extension
-/usr/share/code-oss/bin/code-oss --install-extension dbaeumer.vscode-eslint
-/usr/share/code-oss/bin/code-oss --install-extension esbenp.prettier-vscode
-
 # ディスプレイ解像度設定
 echo -e 'hdmi_force_hotplug=1\nhdmi_group=2\nhdmi_mode=85\nhdmi_drive=2\n' | sudo tee -a /boot/config.txt
 
@@ -85,6 +81,9 @@ sudo npm install n -g
 sudo n 8.10.0
 sudo npm i eslint prettier -g
 
+# code-oss extension
+/usr/share/code-oss/bin/code-oss --install-extension dbaeumer.vscode-eslint
+/usr/share/code-oss/bin/code-oss --install-extension esbenp.prettier-vscode
 
 # カメラを有効化
 sudo raspi-config nonint do_camera 0
