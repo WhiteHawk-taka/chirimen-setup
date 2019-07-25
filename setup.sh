@@ -17,16 +17,17 @@ echo '@xset s off' | sudo tee -a /etc/xdg/lxsession/LXDE-pi/autostart
 echo '@xset -dpms' | sudo tee -a /etc/xdg/lxsession/LXDE-pi/autostart
 echo '@xset s noblank' | sudo tee -a /etc/xdg/lxsession/LXDE-pi/autostart
 
+# aptをtsukubaに変更
+sudo sed -i '1s/^/#/' /etc/apt/sources.list
+sudo sed -i '1s/^/deb http:\/\/ftp.tsukuba.wide.ad.jp\/Linux\/raspbian\/raspbian\/ buster main contrib non-free rpi\n/' /etc/apt/sources.list
+sudo apt-get update
+
 # upgradeを保留に変更
 echo raspberrypi-ui-mods hold | sudo dpkg --set-selections
 # 必要な項目をインストール
 sudo apt-get install at-spi2-core
 
-# 軽量化
-sudo apt-get -y remove --purge libreoffice*
-sudo apt-get -y clean
-sudo apt-get -y autoremove
-
+# update
 sudo apt-get -y update
 sudo apt-get -y upgrade
 
