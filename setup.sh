@@ -69,8 +69,10 @@ sudo raspi-config nonint do_change_timezone Japan
 # キーボード設定
 sudo raspi-config nonint do_configure_keyboard jp
 
+# Wi-Fi設定
+sudo raspi-config nonint do_wifi_country JP
+
 # node.jsのインストール
-sudo npm cache clean
 sudo npm install n -g
 sudo n 10.16.0
 sudo npm i eslint prettier -g
