@@ -174,7 +174,7 @@ fi
 if [ ! -f //etc/apache2/apache2.conf.orig ]; then
     sudo cp /etc/apache2/apache2.conf /etc/apache2/apache2.conf.orig
     sudo sh -c 'cat << EOF > /etc/apache2/apache2.conf
-DefaultRuntimeDir ${APACHE_RUN_DIR}
+DefaultRuntimeDir \${APACHE_RUN_DIR}
 PidFile \${APACHE_PID_FILE}
 Timeout 300
 KeepAlive On
