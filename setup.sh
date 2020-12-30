@@ -21,17 +21,22 @@ sudo sh -c "cat << EOF > /etc/xdg/lxsession/LXDE-pi/autostart
 @lxpanel --profile LXDE-pi
 @pcmanfm --desktop --profile LXDE-pi
 @xscreensaver -no-splash
-point-rpi
 @xset s off
 @xset -dpms
 @xset s noblank
 @/usr/bin/chromium-browser https://localhost/top --enable-experimental-web-platform-features
 EOF"
 
-# aptをtsukubaに変更
+# aptをmirrorで指定
+sudo sh -c "cat << EOF > /etc/apt/mirrors.txt
+http://ftp.jaist.ac.jp/raspbian/
+http://ftp.tsukuba.wide.ad.jp/Linux/raspbian/raspbian/
+http://ftp.yz.yamagata-u.ac.jp/pub/linux/raspbian/raspbian/
+http://raspbian.raspberrypi.org/raspbian/
+EOF"
 sudo cp /etc/apt/sources.list /etc/apt/sources.list.orig
 sudo sh -c "cat << EOF > /etc/apt/sources.list
-deb http://ftp.tsukuba.wide.ad.jp/Linux/raspbian/raspbian/ buster main contrib non-free rpi
+deb mirror+file:/etc/apt/mirrors.txt buster main contrib non-free rpi
 EOF"
 sudo apt-get update
 
@@ -54,15 +59,10 @@ sudo apt-get -y install ttf-kochi-gothic fonts-noto uim uim-mozc nodejs npm apac
 sudo apt-get -y install ttf-kochi-gothic fonts-noto uim uim-mozc nodejs npm apache2 vim emacs libnss3-tools
 sudo apt-get -y autoremove
 
-# VS code (code-ossのインストール)
-# 最新版だと動かないのでバージョンダウンして固定
-wget -qO - https://packagecloud.io/headmelted/codebuilds/gpgkey | sudo apt-key add -
-sudo apt-get update
-sudo dpkg --configure -a
-curl -s https://code.headmelted.com/installers/apt.sh | sudo bash
-sudo apt-get -y remove code-oss
-sudo apt-get -y install code-oss=1.29.0-1539702286
-sudo apt-mark hold code-oss
+# VS code のインストール
+wget -O /tmp/code.deb 'https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-armhf'
+sudo apt install -y /tmp/code.deb
+
 
 # 日本語設定
 sudo sed 's/#\sen_GB\.UTF-8\sUTF-8/en_GB\.UTF-8 UTF-8/g' /etc/locale.gen |\
@@ -78,7 +78,7 @@ sudo locale-gen ja_JP.UTF-8
 sudo update-locale LANG=ja_JP.UTF-8
 
 # 時間設定
-sudo raspi-config nonint do_change_timezone Japan
+sudo raspi-config nonint do_change_timezone Asia/Tokyo
 
 # キーボード設定
 sudo raspi-config nonint do_configure_keyboard jp
@@ -88,20 +88,21 @@ sudo raspi-config nonint do_wifi_country JP
 
 # node.jsのインストール
 sudo npm install n -g
-sudo n 10.16.0
+sudo n 14.15.3
+PATH=$PATH
 sudo npm i eslint prettier -g
 
-# code-oss extension
-/usr/share/code-oss/bin/code-oss --install-extension dbaeumer.vscode-eslint
-/usr/share/code-oss/bin/code-oss --install-extension esbenp.prettier-vscode
+# VS code extension
+/usr/share/code/bin/code --install-extension dbaeumer.vscode-eslint
+/usr/share/code/bin/code --install-extension esbenp.prettier-vscode
 
-# JSのデフォルトをcode-ossに
+# JSのデフォルトをVS codeに
 cat << EOF > /home/pi/.config/mimeapps.list
 [Added Associations]
-application/javascript=code-oss.desktop;
+application/javascript=code.desktop;
 
 [Default Applications]
-application/javascript=code-oss.desktop;
+application/javascript=code.desktop;
 EOF
 
 # カメラを有効化
@@ -149,8 +150,8 @@ if [ ! -f /home/pi/gc.zip ]; then
     wget https://r.chirimen.org/gc.zip
 fi
 # chromiumの起動待ちダウンロード
-if [ ! -f /home/pi/arduino-1.8.6-linuxarm.tar.xz ]; then
-    wget https://downloads.arduino.cc/arduino-1.8.6-linuxarm.tar.xz
+if [ ! -f /home/pi/arduino-1.8.13-linuxarm.tar.xz ]; then
+    wget https://downloads.arduino.cc/arduino-1.8.13-linuxarm.tar.xz
 fi
 if [ ! -d /home/pi/Desktop/gc/ ]; then
     unzip ./gc.zip -d /home/pi/Desktop
@@ -287,15 +288,15 @@ done
 # Arduino IDE 追加
 cd /home/pi/
 mkdir /home/pi/Applications/
-if [ ! -d /home/pi/Applications/arduino-1.8.6/ ]; then
-    tar xvf arduino-1.8.6-linuxarm.tar.xz
-    mv arduino-1.8.6 /home/pi/Applications/
+if [ ! -d /home/pi/Applications/arduino-1.8.13/ ]; then
+    tar xvf arduino-1.8.13-linuxarm.tar.xz
+    mv arduino-1.8.13 /home/pi/Applications/
 fi
 cd /home/pi/Applications/
-ln -s arduino-1.8.6 arduino
+ln -s arduino-1.8.13 arduino
 cd /home/pi/Applications/arduino/
 ./install.sh
-rm -f /home/pi/arduino-1.8.6-linuxarm.tar.xz
+rm -f /home/pi/arduino-1.8.13-linuxarm.tar.xz
 cd /home/pi/
 
 # upgradeを保留を解除
