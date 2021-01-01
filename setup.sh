@@ -88,7 +88,7 @@ sudo raspi-config nonint do_wifi_country JP
 
 # node.jsのインストール
 sudo npm install n -g
-sudo n 14.15.3
+sudo n 12.20.0
 PATH=$PATH
 sudo npm i eslint prettier -g
 
