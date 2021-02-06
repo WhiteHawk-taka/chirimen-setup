@@ -5,6 +5,10 @@
 # chmod 777 setup.sh
 # ./setup.sh
 #
+
+NODE_VERSION=12.20.0
+ARDUINO_VERSION=1.8.13
+
 # 一時的にスリープを無効
 sudo xset s off
 sudo xset -dpms
@@ -94,7 +98,7 @@ sudo raspi-config nonint do_wifi_country JP
 
 # node.jsのインストール
 sudo npm install n -g
-sudo n 12.20.0
+sudo n ${NODE_VERSION}
 PATH=$PATH
 sudo npm i eslint prettier -g
 
@@ -156,8 +160,8 @@ if [ ! -f /home/pi/gc.zip ]; then
     wget https://r.chirimen.org/gc.zip
 fi
 # chromiumの起動待ちダウンロード
-if [ ! -f /home/pi/arduino-1.8.13-linuxarm.tar.xz ]; then
-    wget https://downloads.arduino.cc/arduino-1.8.13-linuxarm.tar.xz
+if [ ! -f /home/pi/arduino-${ARDUINO_VERSION}-linuxarm.tar.xz ]; then
+    wget https://downloads.arduino.cc/arduino-${ARDUINO_VERSION}-linuxarm.tar.xz
 fi
 if [ ! -d /home/pi/Desktop/gc/ ]; then
     unzip ./gc.zip -d /home/pi/Desktop
@@ -294,15 +298,15 @@ done
 # Arduino IDE 追加
 cd /home/pi/
 mkdir /home/pi/Applications/
-if [ ! -d /home/pi/Applications/arduino-1.8.13/ ]; then
-    tar xvf arduino-1.8.13-linuxarm.tar.xz
-    mv arduino-1.8.13 /home/pi/Applications/
+if [ ! -d /home/pi/Applications/arduino-${ARDUINO_VERSION}/ ]; then
+    tar xvf arduino-${ARDUINO_VERSION}-linuxarm.tar.xz
+    mv arduino-${ARDUINO_VERSION} /home/pi/Applications/
 fi
 cd /home/pi/Applications/
-ln -s arduino-1.8.13 arduino
+ln -s arduino-${ARDUINO_VERSION} arduino
 cd /home/pi/Applications/arduino/
 ./install.sh
-rm -f /home/pi/arduino-1.8.13-linuxarm.tar.xz
+rm -f /home/pi/arduino-${ARDUINO_VERSION}-linuxarm.tar.xz
 cd /home/pi/
 
 # upgradeを保留を解除
