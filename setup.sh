@@ -48,25 +48,25 @@ APACHE_000_DEFAULT=$(cat << EOF
         ServerAdmin webmaster@localhost
         DocumentRoot /home/pi/Desktop/gc
 
-        ErrorLog \${APACHE_LOG_DIR}/error.log
-        CustomLog \${APACHE_LOG_DIR}/access.log combined
+        ErrorLog \\\${APACHE_LOG_DIR}/error.log
+        CustomLog \\\${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
 EOF
 )
 APACHE_APACHE2=$(cat << EOF
-DefaultRuntimeDir \${APACHE_RUN_DIR}
-PidFile \${APACHE_PID_FILE}
+DefaultRuntimeDir \\\${APACHE_RUN_DIR}
+PidFile \\\${APACHE_PID_FILE}
 Timeout 300
 KeepAlive On
 MaxKeepAliveRequests 100
 KeepAliveTimeout 5
 
-User \${APACHE_RUN_USER}
-Group \${APACHE_RUN_GROUP}
+User \\\${APACHE_RUN_USER}
+Group \\\${APACHE_RUN_GROUP}
 
 HostnameLookups Off
 
-ErrorLog \${APACHE_LOG_DIR}/error.log
+ErrorLog \\\${APACHE_LOG_DIR}/error.log
 LogLevel warn
 
 IncludeOptional mods-enabled/*.load
@@ -119,8 +119,8 @@ APACHE_VHOST_SSL=$(cat << EOF
 
                 DocumentRoot /home/pi/Desktop/gc
 
-                ErrorLog \${APACHE_LOG_DIR}/error.log
-                CustomLog \${APACHE_LOG_DIR}/access.log combined
+                ErrorLog \\\${APACHE_LOG_DIR}/error.log
+                CustomLog \\\${APACHE_LOG_DIR}/access.log combined
 
                 SSLEngine on
                 SSLCertificateFile        /home/pi/_gc/srv/crt/server.crt
@@ -288,7 +288,7 @@ if [ ! -f /etc/apache2/apache2.conf.orig ]; then
 fi
 sudo sh -c "echo \"${APACHE_APACHE2}\" > /etc/apache2/apache2.conf"
 
-sudo sh -c "echo \"${APACHE_VHOST_SSL}\" /etc/apache2/sites-available/vhost-ssl.conf"
+sudo sh -c "echo \"${APACHE_VHOST_SSL}\" > /etc/apache2/sites-available/vhost-ssl.conf"
 
 sudo a2ensite vhost-ssl
 sudo a2enmod ssl
