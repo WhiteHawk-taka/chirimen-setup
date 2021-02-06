@@ -6,25 +6,15 @@
 # ./setup.sh
 #
 
+# ----------------------- 定義 ----------------
+HOME="/home/pi"
 NODE_VERSION=12.20.0
 ARDUINO_VERSION=1.8.13
-
-# 一時的にスリープを無効
-sudo xset s off
-sudo xset -dpms
-sudo xset s noblank
-# スリープを無効
-grep 'consoleblank=0' /boot/cmdline.txt
-if [ $? -ge 1 ]; then
-    sudo sed '1s/$/ consoleblank=0/' /boot/cmdline.txt |\
-        sudo tee /tmp/cmdline && sudo cat /tmp/cmdline |\
-        sudo tee /boot/cmdline.txt && sudo rm -f /tmp/cmdline
-fi
-
-if [ ! -f /etc/xdg/lxsession/LXDE-pi/autostart.orig ]; then
-    sudo cp /etc/xdg/lxsession/LXDE-pi/autostart /etc/xdg/lxsession/LXDE-pi/autostart.orig
-fi
-sudo sh -c "cat << EOF > /etc/xdg/lxsession/LXDE-pi/autostart
+CHIRIMEN_GC_ZIP="https://r.chirimen.org/gc.zip"
+CHIRIMEN__GC_ZIP="https://r.chirimen.org/_gc.zip"
+ARDUINO_SOUCE="https://downloads.arduino.cc/arduino-${ARDUINO_VERSION}-linuxarm.tar.xz"
+VSCODE_DEB="https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-armhf"
+XDG_AUTOSTART=$(cat << EOF
 @lxpanel --profile LXDE-pi
 @pcmanfm --desktop --profile LXDE-pi
 @xscreensaver -no-splash
@@ -32,148 +22,28 @@ sudo sh -c "cat << EOF > /etc/xdg/lxsession/LXDE-pi/autostart
 @xset -dpms
 @xset s noblank
 @/usr/bin/chromium-browser https://localhost/top --enable-experimental-web-platform-features
-EOF"
-
-# aptをmirrorで指定
-sudo sh -c "cat << EOF > /etc/apt/mirrors.txt
+EOF
+)
+APT_MIRRORS=$(cat << EOF
 http://ftp.jaist.ac.jp/raspbian/
 http://ftp.tsukuba.wide.ad.jp/Linux/raspbian/raspbian/
 http://ftp.yz.yamagata-u.ac.jp/pub/linux/raspbian/raspbian/
 http://raspbian.raspberrypi.org/raspbian/
-EOF"
-if [ ! -f /etc/apt/sources.list.orig ]; then
-    sudo cp /etc/apt/sources.list /etc/apt/sources.list.orig
-fi
-sudo sh -c "cat << EOF > /etc/apt/sources.list
+EOF
+)
+APT_SOURCES_LIST=$(cat << EOF
 deb mirror+file:/etc/apt/mirrors.txt buster main contrib non-free rpi
-EOF"
-sudo apt-get update
-
-# upgradeを保留に変更
-sudo apt-mark hold raspberrypi-ui-mods
-# 必要な項目をインストール
-sudo apt-get install at-spi2-core
-
-# update
-sudo apt-get -y update
-sudo apt-get -y upgrade
-
-# raspiはupgrade失敗しやすいので念の為2回
-sudo apt-get -y update
-sudo apt-get -y upgrade
-
-# 各種ツールをインストール
-sudo apt-get -y install ttf-kochi-gothic fonts-noto uim uim-mozc nodejs npm apache2 vim emacs libnss3-tools
-# インストール失敗しやすいので2回
-sudo apt-get -y install ttf-kochi-gothic fonts-noto uim uim-mozc nodejs npm apache2 vim emacs libnss3-tools
-sudo apt-get -y autoremove
-
-# VS code のインストール
-wget -O /tmp/code.deb 'https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-armhf'
-sudo apt install -y /tmp/code.deb
-
-
-# 日本語設定
-# デフォルトの設定が en_GB.UTF-8 になっている
-sudo sed 's/#\sen_GB\.UTF-8\sUTF-8/en_GB\.UTF-8 UTF-8/g' /etc/locale.gen |\
-    sudo tee /tmp/locale && sudo cat /tmp/locale |\
-    sudo tee /etc/locale.gen && sudo rm -f /tmp/locale
-sudo sed 's/#\sja_JP\.EUC-JP\sEUC-JP/ja_JP\.EUC-JP EUC-JP/g' /etc/locale.gen  |\
-    sudo tee /tmp/locale && sudo cat /tmp/locale |\
-    sudo tee /etc/locale.gen && sudo rm -f /tmp/locale
-sudo sed 's/#\sja_JP\.UTF-8\sUTF-8/ja_JP\.UTF-8 UTF-8/g' /etc/locale.gen  |\
-    sudo tee /tmp/locale && sudo cat /tmp/locale |\
-    sudo tee /etc/locale.gen && sudo rm -f /tmp/locale
-sudo locale-gen ja_JP.UTF-8
-sudo update-locale LANG=ja_JP.UTF-8
-
-# 時間設定
-sudo raspi-config nonint do_change_timezone Asia/Tokyo
-
-# キーボード設定
-sudo raspi-config nonint do_configure_keyboard jp
-
-# Wi-Fi設定
-sudo raspi-config nonint do_wifi_country JP
-
-# node.jsのインストール
-sudo npm install n -g
-sudo n ${NODE_VERSION}
-PATH=$PATH
-sudo npm i eslint prettier -g
-
-# VS code extension
-/usr/share/code/bin/code --install-extension dbaeumer.vscode-eslint
-/usr/share/code/bin/code --install-extension esbenp.prettier-vscode
-
-# JSのデフォルトをVS codeに
-cat << EOF > /home/pi/.config/mimeapps.list
+EOF
+)
+CONFIG_MIMEAPP=$(cat << EOF
 [Added Associations]
 application/javascript=code.desktop;
 
 [Default Applications]
 application/javascript=code.desktop;
 EOF
-
-# カメラを有効化
-sudo raspi-config nonint do_camera 0
-grep 'bcm2835-v4l2' /etc/modprobe.d/bcm2835-v4l2.conf
-if [ $? -ge 1 ]; then
-    echo 'options bcm2835-v4l2 gst_v4l2src_is_broken=1' | sudo tee -a /etc/modprobe.d/bcm2835-v4l2.conf
-fi
-grep 'bcm2835-v4l2' /etc/modules-load.d/modules.conf
-if [ $? -ge 1 ]; then
-    echo 'bcm2835-v4l2' | sudo tee -a /etc/modules-load.d/modules.conf
-fi
-
-# I2Cを有効化
-sudo raspi-config nonint do_i2c 0
-
-# _gc設定
-cd /home/pi/
-if [ ! -f /home/pi/_gc.zip ]; then
-    wget https://r.chirimen.org/_gc.zip
-fi
-if [ ! -d /home/pi/_gc/ ]; then
-    unzip ./_gc.zip
-fi
-cd /home/pi/_gc/srv
-npm i
-sudo npm i forever -g
-cd /home/pi/
-crontab -l > /tmp/tmp_crontab
-grep '/home/pi/_gc/srv/startup.sh' /tmp/tmp_crontab
-if [ $? = 1 ]; then
-    echo "@reboot sudo -u pi /home/pi/_gc/srv/startup.sh" | crontab
-fi
-ln -s /home/pi/_gc/srv/reset.sh /home/pi/Desktop/reset.sh
-mkdir /home/pi/.config/chromium/
-mkdir /home/pi/.config/chromium/Default/
-cp /home/pi/_gc/bookmark/Bookmarks /home/pi/.config/chromium/Default/Bookmarks
-pcmanfm --set-wallpaper /home/pi/_gc/wallpaper/wallpaper-720P.png
-
-
-# gc設定
-chromium-browser &
-cd /home/pi/
-if [ ! -f /home/pi/gc.zip ]; then
-    wget https://r.chirimen.org/gc.zip
-fi
-# chromiumの起動待ちダウンロード
-if [ ! -f /home/pi/arduino-${ARDUINO_VERSION}-linuxarm.tar.xz ]; then
-    wget https://downloads.arduino.cc/arduino-${ARDUINO_VERSION}-linuxarm.tar.xz
-fi
-if [ ! -d /home/pi/Desktop/gc/ ]; then
-    unzip ./gc.zip -d /home/pi/Desktop
-fi
-# chromiumの起動待ち
-sleep 120s
-
-# Apache設定
-if [ ! -f /etc/apache2/sites-available/000-default.conf.orig ]; then
-    sudo cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/000-default.conf.orig
-fi
-sudo sh -c 'cat << EOF > /etc/apache2/sites-available/000-default.conf
+)
+APACHE_000_DEFAULT=$(cat << EOF
 <VirtualHost *:80>
         ServerAdmin webmaster@localhost
         DocumentRoot /home/pi/Desktop/gc
@@ -181,11 +51,9 @@ sudo sh -c 'cat << EOF > /etc/apache2/sites-available/000-default.conf
         ErrorLog \${APACHE_LOG_DIR}/error.log
         CustomLog \${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
-EOF'
-if [ ! -f /etc/apache2/apache2.conf.orig ]; then
-    sudo cp /etc/apache2/apache2.conf /etc/apache2/apache2.conf.orig
-fi
-sudo sh -c 'cat << EOF > /etc/apache2/apache2.conf
+EOF
+)
+APACHE_APACHE2=$(cat << EOF
 DefaultRuntimeDir \${APACHE_RUN_DIR}
 PidFile \${APACHE_PID_FILE}
 Timeout 300
@@ -242,9 +110,9 @@ LogFormat "%{User-agent}i" agent
 
 IncludeOptional conf-enabled/*.conf
 IncludeOptional sites-enabled/*.conf
-EOF'
-
-sudo sh -c 'cat << EOF > /etc/apache2/sites-available/vhost-ssl.conf
+EOF
+)
+APACHE_VHOST_SSL=$(cat << EOF
 <IfModule mod_ssl.c>
         <VirtualHost _default_:443>
                 ServerAdmin webmaster@localhost
@@ -266,7 +134,161 @@ sudo sh -c 'cat << EOF > /etc/apache2/sites-available/vhost-ssl.conf
                 </Directory>
         </VirtualHost>
 </IfModule>
-EOF'
+EOF
+)
+# ------------ 定義箇所ここまで --------------
+
+# メイン処理
+# 一時的にスリープを無効
+sudo xset s off
+sudo xset -dpms
+sudo xset s noblank
+# スリープを無効
+grep 'consoleblank=0' /boot/cmdline.txt
+if [ $? -ge 1 ]; then
+    sudo sed '1s/$/ consoleblank=0/' /boot/cmdline.txt |\
+        sudo tee /tmp/cmdline && sudo cat /tmp/cmdline |\
+        sudo tee /boot/cmdline.txt && sudo rm -f /tmp/cmdline
+fi
+
+if [ ! -f /etc/xdg/lxsession/LXDE-pi/autostart.orig ]; then
+    sudo cp /etc/xdg/lxsession/LXDE-pi/autostart /etc/xdg/lxsession/LXDE-pi/autostart.orig
+fi
+sudo sh -c "echo \"${XDG_AUTOSTART}\" > /etc/xdg/lxsession/LXDE-pi/autostart"
+
+# aptをmirrorで指定
+sudo sh -c "echo \"${APT_MIRRORS}\" > /etc/apt/mirrors.txt"
+if [ ! -f /etc/apt/sources.list.orig ]; then
+    sudo cp /etc/apt/sources.list /etc/apt/sources.list.orig
+fi
+sudo sh -c "echo \"${APT_SOURCES_LIST}\" > /etc/apt/sources.list"
+sudo apt-get update
+
+# upgradeを保留に変更
+sudo apt-mark hold raspberrypi-ui-mods
+# 必要な項目をインストール
+sudo apt-get install at-spi2-core
+
+# update
+sudo apt-get -y update
+sudo apt-get -y upgrade
+
+# raspiはupgrade失敗しやすいので念の為2回
+sudo apt-get -y update
+sudo apt-get -y upgrade
+
+# 各種ツールをインストール
+sudo apt-get -y install ttf-kochi-gothic fonts-noto uim uim-mozc nodejs npm apache2 vim emacs libnss3-tools
+# インストール失敗しやすいので2回
+sudo apt-get -y install ttf-kochi-gothic fonts-noto uim uim-mozc nodejs npm apache2 vim emacs libnss3-tools
+sudo apt-get -y autoremove
+
+# VS code のインストール
+wget -O /tmp/code.deb "${VSCODE_DEB}"
+sudo apt install -y /tmp/code.deb
+
+
+# 日本語設定
+# デフォルトの設定が en_GB.UTF-8 になっている
+sudo sed 's/#\sen_GB\.UTF-8\sUTF-8/en_GB\.UTF-8 UTF-8/g' /etc/locale.gen |\
+    sudo tee /tmp/locale && sudo cat /tmp/locale |\
+    sudo tee /etc/locale.gen && sudo rm -f /tmp/locale
+sudo sed 's/#\sja_JP\.EUC-JP\sEUC-JP/ja_JP\.EUC-JP EUC-JP/g' /etc/locale.gen  |\
+    sudo tee /tmp/locale && sudo cat /tmp/locale |\
+    sudo tee /etc/locale.gen && sudo rm -f /tmp/locale
+sudo sed 's/#\sja_JP\.UTF-8\sUTF-8/ja_JP\.UTF-8 UTF-8/g' /etc/locale.gen  |\
+    sudo tee /tmp/locale && sudo cat /tmp/locale |\
+    sudo tee /etc/locale.gen && sudo rm -f /tmp/locale
+sudo locale-gen ja_JP.UTF-8
+sudo update-locale LANG=ja_JP.UTF-8
+
+# 時間設定
+sudo raspi-config nonint do_change_timezone Asia/Tokyo
+
+# キーボード設定
+sudo raspi-config nonint do_configure_keyboard jp
+
+# Wi-Fi設定
+sudo raspi-config nonint do_wifi_country JP
+
+# node.jsのインストール
+sudo npm install n -g
+sudo n ${NODE_VERSION}
+PATH=$PATH
+sudo npm i eslint prettier -g
+
+# VS code extension
+/usr/share/code/bin/code --install-extension dbaeumer.vscode-eslint
+/usr/share/code/bin/code --install-extension esbenp.prettier-vscode
+
+# JSのデフォルトをVS codeに
+echo "${CONFIG_MIMEAPP}" > ${HOME}/.config/mimeapps.list
+
+# カメラを有効化
+sudo raspi-config nonint do_camera 0
+grep 'bcm2835-v4l2' /etc/modprobe.d/bcm2835-v4l2.conf
+if [ $? -ge 1 ]; then
+    echo 'options bcm2835-v4l2 gst_v4l2src_is_broken=1' | sudo tee -a /etc/modprobe.d/bcm2835-v4l2.conf
+fi
+grep 'bcm2835-v4l2' /etc/modules-load.d/modules.conf
+if [ $? -ge 1 ]; then
+    echo 'bcm2835-v4l2' | sudo tee -a /etc/modules-load.d/modules.conf
+fi
+
+# I2Cを有効化
+sudo raspi-config nonint do_i2c 0
+
+# _gc設定
+cd ${HOME}
+if [ ! -f ${HOME}/_gc.zip ]; then
+    wget ${CHIRIMEN__GC_ZIP}
+fi
+if [ ! -d ${HOME}/_gc/ ]; then
+    unzip ./_gc.zip
+fi
+cd ${HOME}/_gc/srv
+npm i
+sudo npm i forever -g
+cd ${HOME}
+crontab -l > /tmp/tmp_crontab
+grep "${HOME}/_gc/srv/startup.sh" /tmp/tmp_crontab
+if [ $? = 1 ]; then
+    echo "@reboot sudo -u pi ${HOME}/_gc/srv/startup.sh" | crontab
+fi
+ln -s ${HOME}/_gc/srv/reset.sh ${HOME}/Desktop/reset.sh
+mkdir ${HOME}/.config/chromium/
+mkdir ${HOME}/.config/chromium/Default/
+cp ${HOME}/_gc/bookmark/Bookmarks ${HOME}/.config/chromium/Default/Bookmarks
+pcmanfm --set-wallpaper ${HOME}/_gc/wallpaper/wallpaper-720P.png
+
+
+# gc設定
+chromium-browser &
+cd ${HOME}
+if [ ! -f ${HOME}/gc.zip ]; then
+    wget ${CHIRIMEN_GC_ZIP}
+fi
+# chromiumの起動待ちダウンロード
+if [ ! -f ${HOME}/arduino-${ARDUINO_VERSION}-linuxarm.tar.xz ]; then
+    wget ${ARDUINO_SOUCE}
+fi
+if [ ! -d ${HOME}/Desktop/gc/ ]; then
+    unzip ./gc.zip -d ${HOME}/Desktop
+fi
+# chromiumの起動待ち
+sleep 120s
+
+# Apache設定
+if [ ! -f /etc/apache2/sites-available/000-default.conf.orig ]; then
+    sudo cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/000-default.conf.orig
+fi
+sudo sh -c "echo \"${APACHE_000_DEFAULT}\" > /etc/apache2/sites-available/000-default.conf"
+if [ ! -f /etc/apache2/apache2.conf.orig ]; then
+    sudo cp /etc/apache2/apache2.conf /etc/apache2/apache2.conf.orig
+fi
+sudo sh -c "echo \"${APACHE_APACHE2}\" > /etc/apache2/apache2.conf"
+
+sudo sh -c "echo \"${APACHE_VHOST_SSL}\" /etc/apache2/sites-available/vhost-ssl.conf"
 
 sudo a2ensite vhost-ssl
 sudo a2enmod ssl
@@ -285,7 +307,7 @@ if [ $? = 1 ]; then
 fi
 
 # 証明書追加
-certfile="/home/pi/_gc/srv/crt/ca.crt"
+certfile="${HOME}/_gc/srv/crt/ca.crt"
 certname="org-TripArts"
 
 for certDB in $(find ~/ -name "cert9.db")
@@ -296,18 +318,18 @@ done
 
 
 # Arduino IDE 追加
-cd /home/pi/
-mkdir /home/pi/Applications/
-if [ ! -d /home/pi/Applications/arduino-${ARDUINO_VERSION}/ ]; then
+cd ${HOME}
+mkdir ${HOME}/Applications/
+if [ ! -d ${HOME}/Applications/arduino-${ARDUINO_VERSION}/ ]; then
     tar xvf arduino-${ARDUINO_VERSION}-linuxarm.tar.xz
-    mv arduino-${ARDUINO_VERSION} /home/pi/Applications/
+    mv arduino-${ARDUINO_VERSION} ${HOME}/Applications/
 fi
-cd /home/pi/Applications/
+cd ${HOME}/Applications/
 ln -s arduino-${ARDUINO_VERSION} arduino
-cd /home/pi/Applications/arduino/
+cd ${HOME}/Applications/arduino/
 ./install.sh
-rm -f /home/pi/arduino-${ARDUINO_VERSION}-linuxarm.tar.xz
-cd /home/pi/
+rm -f ${HOME}/arduino-${ARDUINO_VERSION}-linuxarm.tar.xz
+cd ${HOME}
 
 # upgradeを保留を解除
 sudo apt-mark auto raspberrypi-ui-mods
