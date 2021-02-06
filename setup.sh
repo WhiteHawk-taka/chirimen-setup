@@ -100,15 +100,15 @@ Include ports.conf
 
 AccessFileName .htaccess
 
-<FilesMatch "^\.ht">
+<FilesMatch \"^\.ht\">
         Require all denied
 </FilesMatch>
 
-LogFormat "%v:%p %h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" vhost_combined
-LogFormat "%h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" combined
-LogFormat "%h %l %u %t \"%r\" %>s %O" common
-LogFormat "%{Referer}i -> %U" referer
-LogFormat "%{User-agent}i" agent
+LogFormat \"%v:%p %h %l %u %t \\\\\"%r\\\\\" %>s %O \\\\\"%{Referer}i\\\\\" \\\\\"%{User-Agent}i\\\\\"\" vhost_combined
+LogFormat \"%h %l %u %t \\\\\"%r\\\\\" %>s %O \\\\\"%{Referer}i\\\\\" \\\\\"%{User-Agent}i\\\\\"\" combined
+LogFormat \"%h %l %u %t \\\\\"%r\\\\\" %>s %O\" common
+LogFormat \"%{Referer}i -> %U\" referer
+LogFormat \"%{User-agent}i\" agent
 
 IncludeOptional conf-enabled/*.conf
 IncludeOptional sites-enabled/*.conf
@@ -128,7 +128,7 @@ APACHE_VHOST_SSL=$(cat << EOF
                 SSLCertificateFile        /home/pi/_gc/srv/crt/server.crt
                 SSLCertificateKeyFile /home/pi/_gc/srv/crt/server.key
 
-                <FilesMatch "\.(cgi|shtml|phtml|php)$">
+                <FilesMatch \"\.(cgi|shtml|phtml|php)\$\">
                                 SSLOptions +StdEnvVars
                 </FilesMatch>
                 <Directory /usr/lib/cgi-bin>
