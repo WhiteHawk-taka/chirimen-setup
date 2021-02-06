@@ -1,7 +1,8 @@
 #!/bin/bash
 #
 # cd /home/pi/
-# wget https://rawgit.com/chirimen-oh/chirimen-raspi3/master/setup.sh
+# wget -O setup.sh https://raw.githubusercontent.com/chirimen-oh/chirimen/master/setup.sh
+# chmod 777 setup.sh
 # ./setup.sh
 #
 # 一時的にスリープを無効
@@ -16,7 +17,9 @@ if [ $? -ge 1 ]; then
         sudo tee /boot/cmdline.txt && sudo rm -f /tmp/cmdline
 fi
 
-sudo cp /etc/xdg/lxsession/LXDE-pi/autostart /etc/xdg/lxsession/LXDE-pi/autostart.orig
+if [ ! -f /etc/xdg/lxsession/LXDE-pi/autostart.orig ]; then
+    sudo cp /etc/xdg/lxsession/LXDE-pi/autostart /etc/xdg/lxsession/LXDE-pi/autostart.orig
+fi
 sudo sh -c "cat << EOF > /etc/xdg/lxsession/LXDE-pi/autostart
 @lxpanel --profile LXDE-pi
 @pcmanfm --desktop --profile LXDE-pi
@@ -34,7 +37,9 @@ http://ftp.tsukuba.wide.ad.jp/Linux/raspbian/raspbian/
 http://ftp.yz.yamagata-u.ac.jp/pub/linux/raspbian/raspbian/
 http://raspbian.raspberrypi.org/raspbian/
 EOF"
-sudo cp /etc/apt/sources.list /etc/apt/sources.list.orig
+if [ ! -f /etc/apt/sources.list.orig ]; then
+    sudo cp /etc/apt/sources.list /etc/apt/sources.list.orig
+fi
 sudo sh -c "cat << EOF > /etc/apt/sources.list
 deb mirror+file:/etc/apt/mirrors.txt buster main contrib non-free rpi
 EOF"
@@ -65,6 +70,7 @@ sudo apt install -y /tmp/code.deb
 
 
 # 日本語設定
+# デフォルトの設定が en_GB.UTF-8 になっている
 sudo sed 's/#\sen_GB\.UTF-8\sUTF-8/en_GB\.UTF-8 UTF-8/g' /etc/locale.gen |\
     sudo tee /tmp/locale && sudo cat /tmp/locale |\
     sudo tee /etc/locale.gen && sudo rm -f /tmp/locale
@@ -162,7 +168,8 @@ sleep 120s
 # Apache設定
 if [ ! -f /etc/apache2/sites-available/000-default.conf.orig ]; then
     sudo cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/000-default.conf.orig
-    sudo sh -c 'cat << EOF > /etc/apache2/sites-available/000-default.conf
+fi
+sudo sh -c 'cat << EOF > /etc/apache2/sites-available/000-default.conf
 <VirtualHost *:80>
         ServerAdmin webmaster@localhost
         DocumentRoot /home/pi/Desktop/gc
@@ -171,10 +178,10 @@ if [ ! -f /etc/apache2/sites-available/000-default.conf.orig ]; then
         CustomLog \${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
 EOF'
-fi
-if [ ! -f //etc/apache2/apache2.conf.orig ]; then
+if [ ! -f /etc/apache2/apache2.conf.orig ]; then
     sudo cp /etc/apache2/apache2.conf /etc/apache2/apache2.conf.orig
-    sudo sh -c 'cat << EOF > /etc/apache2/apache2.conf
+fi
+sudo sh -c 'cat << EOF > /etc/apache2/apache2.conf
 DefaultRuntimeDir \${APACHE_RUN_DIR}
 PidFile \${APACHE_PID_FILE}
 Timeout 300
@@ -232,7 +239,6 @@ LogFormat "%{User-agent}i" agent
 IncludeOptional conf-enabled/*.conf
 IncludeOptional sites-enabled/*.conf
 EOF'
-fi
 
 sudo sh -c 'cat << EOF > /etc/apache2/sites-available/vhost-ssl.conf
 <IfModule mod_ssl.c>
@@ -261,13 +267,13 @@ EOF'
 sudo a2ensite vhost-ssl
 sudo a2enmod ssl
 sudo systemctl restart apache2
-grep '--enable-experimental-web-platform-features' /usr/share/raspi-ui-overrides/applications/lxde-x-www-browser.desktop
+grep -- '--enable-experimental-web-platform-features' /usr/share/raspi-ui-overrides/applications/lxde-x-www-browser.desktop
 if [ $? = 1 ]; then
     sudo sed 's/Exec=\/usr\/bin\/x-www-browser\s%u/Exec=\/usr\/bin\/x-www-browser --enable-experimental-web-platform-features %u/g' /usr/share/raspi-ui-overrides/applications/lxde-x-www-browser.desktop |\
         sudo tee /tmp/xbrowser && sudo cat /tmp/xbrowser |\
         sudo tee /usr/share/raspi-ui-overrides/applications/lxde-x-www-browser.desktop && sudo rm -f /tmp/xbrowser
 fi
-grep '--enable-experimental-web-platform-features' /usr/share/applications/chromium-browser.desktop
+grep -- '--enable-experimental-web-platform-features' /usr/share/applications/chromium-browser.desktop
 if [ $? = 1 ]; then
     sudo sed 's/Exec=chromium-browser/Exec=chromium-browser --enable-experimental-web-platform-features/g' /usr/share/applications/chromium-browser.desktop |\
         sudo tee /tmp/chbrowser && sudo cat /tmp/chbrowser |\
