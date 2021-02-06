@@ -38,9 +38,11 @@ EOF
 CONFIG_MIMEAPP=$(cat << EOF
 [Added Associations]
 application/javascript=code.desktop;
+text/plain=code.desktop
 
 [Default Applications]
 application/javascript=code.desktop;
+text/plain=code.desktop
 EOF
 )
 APACHE_000_DEFAULT=$(cat << EOF
@@ -221,7 +223,7 @@ sudo npm i eslint prettier -g
 /usr/share/code/bin/code --install-extension dbaeumer.vscode-eslint
 /usr/share/code/bin/code --install-extension esbenp.prettier-vscode
 
-# JSのデフォルトをVS codeに
+# .js .pyのデフォルトをVS codeに
 echo "${CONFIG_MIMEAPP}" > ${HOME}/.config/mimeapps.list
 
 # カメラを有効化
